@@ -1,203 +1,67 @@
-$Global:GetChildItemColorExtensions = @{}
 
-$GetChildItemColorExtensions.Add(
-    'CompressedList',
-    @(
-        ".7z",
-        ".gz",
-        ".rar",
-        ".tar",
-        ".zip"
-    )
-)
+Function Get-ChildItemColorTable {
+    $UserExtensionMapPath = (Join-Path -Path (gci $profile).DirectoryName -ChildPath "ExtensionMap.json")
+    $UserTypeMapPath = (Join-Path -Path (gci $profile).DirectoryName -ChildPath "TypeMap.json")
+    
+    $ExtensionMapPath = (Join-Path -Path $PSScriptRoot -ChildPath "ExtensionMap.json")
+    $TypeMapPath = (Join-Path -Path $PSScriptRoot -ChildPath "TypeMap.json")
+    
+    if ($UserExtensionMapPath) {
+        Write-Warning "Using user profile extension map"
+        $ExtensionMapPath = $UserExtensionMapPath
+    }
+    else {
+        Write-Warning "User profile extension map path not found, creating default template."
+        Copy-Item $UserExtensionMapPath $ExtensionMapPath
+    }
 
-$GetChildItemColorExtensions.Add(
-    'ExecutableList',
-    @(
-        ".exe",
-        ".bat",
-        ".cmd",
-        ".reg",
-        ".fsx",
-        ".sh"
-    )
-)
+    if ($UserTypeMapPath) {
+        Write-Warning "Using user profile type map"
+        $ExtensionMapPath = $UserExtensionMapPath
+    }
+    else {
+        Write-Warning "User profile type map path not found, creating default template."
+        Copy-Item $UserTypeMapPath $TypeMapPath
+    }
 
-$GetChildItemColorExtensions.Add(
-    'DllPdbList',
-    @(
-        ".dll",
-        ".pdb"
-    )
-)
 
-$GetChildItemColorExtensions.Add(
-    'TextList',
-    @(
-        ".csv",
-        ".log",
-        ".markdown",
-        ".md",
-        ".rst",
-        ".txt"
-    )
-)
+    
+    if (Test-Path $ExtensionMapPath){
+        $Global:GetChildItemColorExtensions = @{}
+        (Get-Content $ExtensionMapPath | ConvertFrom-Json).psobject.properties | ForEach-Object { $global:GetChildItemColorExtensions[$_.Name] = $_.Value }
+        Write-Warning "Loaded ExtensionMap"
+    }
 
-$GetChildItemColorExtensions.Add(
-    'ConfigsList',
-    @(
-        ".cfg",
-        ".conf",
-        ".config",
-        ".ini",
-        ".json"
-    )
-)
+    if (Test-Path $TypeMapPath){
+        $ColorMap = @{}
+        (Get-Content $TypeMapPath | ConvertFrom-Json).psobject.properties | ForEach-Object { $ColorMap[$_.Name] = $_.Value }
+        Write-Warning "Loaded TypeMap"
+    }
+    Write-Warning "Resetting Color Table"
+    $Global:GetChildItemColorTable = @{
+        File = @{ Default = $OriginalForegroundColor }
+        Service = @{ Default = $OriginalForegroundColor }
+        Match = @{ Default = $OriginalForegroundColor }
+    }
 
-$GetChildItemColorExtensions.Add(
-    'SourceCodeList',
-    @(
-        # Ada
-        ".adb", ".ads",
+    $GetChildItemColorTable.File.Add('Directory', $ColorMap.Type.Meta.Directory)
+    $GetChildItemColorTable.File.Add('Symlink', $ColorMap.Type.Meta.Symlink) 
 
-        # C Programming language
-        ".c", ".h",
+    ForEach ($Type in $GetChildItemColorExtensions.Keys) {
+        ForEach ($Color in ($ColorMap.Type.File.$Type)) {
+            ForEach ($Extension in $GetChildItemColorExtensions.$Type) {
+                $GetChildItemColorTable.File.Add($Extension, $Color)
+            }
+        }
+    }
+    
+    $GetChildItemColorTable.Service.Add('Running', "DarkGreen")
+    $GetChildItemColorTable.Service.Add('Stopped', "DarkRed")
 
-        # C++
-        #".C", ".h"
-        ".cc", ".cpp", ".cxx", ".c++", ".hh", ".hpp", ".hxx", ".h++",
-
-        # C#
-        ".cs",
-
-        # COBOL
-        ".cbl", ".cob", ".cpy",
-
-        # Common Lisp
-        ".lisp", ".lsp", ".l", ".cl", ".fasl",
-
-        # Clojure
-        ".clj", ".cljs", ".cljc", "edn",
-
-        # Erlang
-        ".erl", ".hrl",
-
-        # F# Programming Language
-        #".fsx"
-        ".fs", ".fsi", ".fsscript",
-
-        # Fortran
-        ".f", ".for", ".f90",
-
-        # Go
-        ".go",
-
-        # Groovy
-        ".grooy",
-
-        # Haskell
-        ".hs", ".lhs",
-
-        # HTML
-        ".html", ".htm", ".hta", ".css", ".scss",
-        
-        # Java
-        ".java", ".class", ".jar",
-
-        # Javascript
-        ".js", ".mjs", ".ts", ".tsx"
-
-        # Objective C
-        ".m", ".mm",
-
-        # P Programming Language
-        ".p",
-
-        # Perl
-        ".pl", ".pm", ".t", ".pod",
-
-        # PHP
-        ".php", ".phtml", ".php3", ".php4", ".php5", ".php7", ".phps", ".php-s", ".pht",
-
-        # Pascal
-        ".pp", ".pas", ".inc",
-
-        # PowerShell
-        ".ps1", ".psm1", ".ps1xml", ".psc1", ".psd1", ".pssc", ".cdxml",
-
-        # Prolog
-        #".P"
-        #".pl"
-        ".pro",
-
-        # Python
-        ".py", ".pyx", ".pyc", ".pyd", ".pyo", ".pyw", ".pyz",
-
-        # R Programming Language
-        ".r", ".RData", ".rds", ".rda",
-
-        # Ruby
-        ".rb"
-
-        # Rust
-        ".rs", ".rlib",
-
-        # Scala
-        ".scala", ".sc",
-
-        # Scheme
-        ".scm", ".ss",
-
-        # Swift
-        ".swift",
-
-        # Unreal Script
-        ".uc", ".uci", ".upkg",
-
-        # SQL
-        ".sql",
-
-        # VB Script
-        ".vbs", ".vbe", ".wsf", ".wsc", ".asp"
-    )
-)
-
-$Global:GetChildItemColorTable = @{
-    File = @{ Default = $OriginalForegroundColor }
-    Service = @{ Default = $OriginalForegroundColor }
-    Match = @{ Default = $OriginalForegroundColor }
+    $GetChildItemColorTable.Match.Add('Path', "Cyan")
+    $GetChildItemColorTable.Match.Add('LineNumber', "Yellow")
+    $GetChildItemColorTable.Match.Add('Line', $OriginalForegroundColor)
 }
 
-$GetChildItemColorTable.File.Add('Directory', "Blue")
-$GetChildItemColorTable.File.Add('Symlink', "Cyan") 
 
-ForEach ($Extension in $GetChildItemColorExtensions.CompressedList) {
-    $GetChildItemColorTable.File.Add($Extension, "Red")
-}
-
-ForEach ($Extension in $GetChildItemColorExtensions.ExecutableList) {
-    $GetChildItemColorTable.File.Add($Extension, "Green")
-}
-
-ForEach ($Extension in $GetChildItemColorExtensions.TextList) {
-    $GetChildItemColorTable.File.Add($Extension, "Yellow")
-}
-
-ForEach ($Extension in $GetChildItemColorExtensions.DllPdbList) {
-    $GetChildItemColorTable.File.Add($Extension, "DarkGreen")
-}
-
-ForEach ($Extension in $GetChildItemColorExtensions.ConfigsList) {
-    $GetChildItemColorTable.File.Add($Extension, "Gray")
-}
-
-ForEach ($Extension in $GetChildItemColorExtensions.SourceCodeList) {
-    $GetChildItemColorTable.File.Add($Extension, "DarkYellow")
-}
-
-$GetChildItemColorTable.Service.Add('Running', "DarkGreen")
-$GetChildItemColorTable.Service.Add('Stopped', "DarkRed")
-
-$GetChildItemColorTable.Match.Add('Path', "Cyan")
-$GetChildItemColorTable.Match.Add('LineNumber', "Yellow")
-$GetChildItemColorTable.Match.Add('Line', $OriginalForegroundColor)
+Export-ModuleMember Get-ChildItemColorTable

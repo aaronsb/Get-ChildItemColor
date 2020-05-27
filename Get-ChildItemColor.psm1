@@ -1,9 +1,25 @@
+Add-Type -assemblyname System.ServiceProcess
+
+$PsColorResources = @(
+    "PSColorHelper.ps1",
+    "FileInfo.ps1",
+    "ServiceController.ps1",
+    "MatchInfo.ps1",
+    "ProcessInfo.ps1",
+    "Get-ChildItemColorTable.ps1")
+
+ForEach ($resource in $PsColorResources) {
+    . (Join-Path -Path $PSScriptRoot -ChildPath $resource)
+}
+
+$script:showHeader=$true
 $OriginalForegroundColor = $Host.UI.RawUI.ForegroundColor
 if ([System.Enum]::IsDefined([System.ConsoleColor], 1) -eq "False") { $OriginalForegroundColor = "Gray" }
 
 $Global:GetChildItemColorVerticalSpace = 1
 
-. "$PSScriptRoot\Get-ChildItemColorTable.ps1"
+Get-ChildItemColorTable
+
 
 Function Get-FileColor($Item) {
     $Key = 'Default'
@@ -132,15 +148,6 @@ Function Get-ChildItemColorFormatWide {
     }
 }
 
-Add-Type -assemblyname System.ServiceProcess
-
-. "$PSScriptRoot\PSColorHelper.ps1"
-. "$PSScriptRoot\FileInfo.ps1"
-. "$PSScriptRoot\ServiceController.ps1"
-. "$PSScriptRoot\MatchInfo.ps1"
-. "$PSScriptRoot\ProcessInfo.ps1"
-
-$script:showHeader=$true
 
 function Out-Default {
     [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=113362', RemotingCapability='None')]
