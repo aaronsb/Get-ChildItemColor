@@ -21,4 +21,3 @@ Write-Host "Creating release archive..."
 Copy-Item -Path "$src\*" `
           -Destination $dist `
           -Recurse
-

@@ -101,7 +101,13 @@ $Global:GetChildItemColorVerticalSpace = 1
 #+end_src
 * Authors
 - [[http://github.com/joonro][Joon Ro]].
+- [[https://github.com/aaronsb][Aaron Bockelie]]
 * Changelog
+** v2.3.0
+- Externalized configuration files to json dictionaries
+- Recursive processing of file types and color mappings is now allowed
+- If no json color templates exist in $profile directory, copy default template files to $profile
+- Reload colors after editing json with Get-ChildItemColorTable
 ** v2.2.0
 - Fix #27, Display issue with Chinese. (Thanks to [[https://github.com/shiena][shiena]])
 ** v2.1.1
