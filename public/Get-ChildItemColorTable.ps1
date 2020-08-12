@@ -1,4 +1,3 @@
-
 Function Get-ChildItemColorTable {
     [CmdletBinding()]
     Param([switch]$ResetDefaults,[switch]$ShowColors)
@@ -81,12 +80,8 @@ Function Get-ChildItemColorTable {
     
     $GetChildItemColorTable.Service.Add('Running', $TypeMap.Type.Service.Running)
     $GetChildItemColorTable.Service.Add('Stopped', $TypeMap.Type.Service.Stopped)
-
     $GetChildItemColorTable.Match.Add('Path', $TypeMap.Type.Format.Path)
     $GetChildItemColorTable.Match.Add('LineNumber', $TypeMap.Type.Format.LineNumber)
     $GetChildItemColorTable.Match.Add('Line', $TypeMap.Type.Format.Line)
 
 }
-
-
-Export-ModuleMember Get-ChildItemColorTable
