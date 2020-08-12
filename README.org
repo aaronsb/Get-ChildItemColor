@@ -103,6 +103,10 @@ $Global:GetChildItemColorVerticalSpace = 1
 - [[http://github.com/joonro][Joon Ro]].
 - [[https://github.com/aaronsb][Aaron Bockelie]]
 * Changelog
+** v3.0.0
+- Moved modules 1:1 to file structure reflecting public and private components
+- All dotsourcing comes from master module file
+- Export of functions managed specifically from module definition.
 ** v2.3.0
 - Externalized configuration files to json dictionaries
 - Recursive processing of file types and color mappings is now allowed
