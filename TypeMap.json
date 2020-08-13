@@ -1,0 +1,31 @@
+{
+    "Type": [
+    { "File": {
+        "CompressedList": "Red",
+        "ExecutableList": "Green",
+        "DllPdbList": "DarkGreen",
+        "TextList": "Yellow",
+        "ConfigsList": "DarkCyan",
+        "SourceCodeList": "DarkYellow",
+        "ProductivityList": "DarkCyan"
+        }
+    },
+    { "Meta": {
+        "Directory": "Blue",
+        "Symlink": "Cyan"
+        }
+    },
+    { "Service": {
+        "Running": "DarkGreen",
+        "Stopped": "DarkRed"
+    }
+    },
+    { "Format": {
+        "Path": "Cyan",
+        "LineNumber": "DarkGreen",
+        "Line": "Green",
+        "Default": "DarkGreen"
+    }
+    }
+    ]
+}

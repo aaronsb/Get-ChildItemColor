@@ -2,6 +2,7 @@ Function Get-ChildItemColor {
     Param(
         [string]$Path = ""
     )
+
     $Expression = "Get-ChildItem -Path `"$Path`" $Args"
 
     $Items = Invoke-Expression $Expression

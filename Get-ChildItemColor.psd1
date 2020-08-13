@@ -70,7 +70,8 @@ Description = 'Get-ChildItemColor provides colored versions of Get-ChildItem Cmd
 FunctionsToExport = @(
     'Get-ChildItemColorTable',
     'Get-ChildItemColor',
-    'Get-ChildItemColorFormatWide'
+    'Get-ChildItemColorFormatWide',
+    'Get-ChildItemLSAlias',
     'Out-Default'
 )
 

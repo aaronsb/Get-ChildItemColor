@@ -14,6 +14,7 @@ $PsColorResources = @(
     "./public/Get-ChildItemColor.ps1",
     "./public/Get-ChildItemColorFormatWide.ps1",
     "./public/Get-ChildItemColorTable.ps1",
+    "./public/Get-ChildItemLSAlias",
     "./public/Get-FileColor.ps1",
     "./public/Out-Default.ps1"
     )
